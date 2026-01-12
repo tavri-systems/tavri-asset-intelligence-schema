@@ -1,0 +1,59 @@
+{
+  "package": {
+    "packageId": "pkg-2026-01-11-fac008-starter-001",
+    "schemaVersion": "v0.1",
+    "generatedAt": "2026-01-11T03:30:00Z",
+
+    "assets": [
+      {
+        "assetId": "asset-xfmr-starter-001",
+        "assetClass": "transformer",
+        "manufacturer": "ExampleCo",
+        "model": "TX-START",
+        "serialNumber": "SN-START-001",
+        "locationHint": "Example Substation",
+        "evidenceRefs": [
+          { "evidenceId": "ev-nameplate-photo-starter-001", "purpose": "nameplate_photo" }
+        ]
+      }
+    ],
+
+    "evidence": [
+      {
+        "evidenceId": "ev-nameplate-photo-starter-001",
+        "type": "image",
+        "capturedAt": "2026-01-10T20:00:00Z",
+        "source": { "system": "field_capture_app", "deviceId": "device-starter", "uploadedBy": "technician" },
+        "uri": "s3://example-bucket/tavri/evidence/ev-nameplate-photo-starter-001.jpg",
+        "hashAlg": "sha256",
+        "hash": "1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff",
+        "notes": "Starter package: nameplate photo evidence reference."
+      }
+    ],
+
+    "ratingRecords": [
+      {
+        "ratingRecordId": "rr-starter-001",
+        "assetId": "asset-xfmr-starter-001",
+        "ratingType": "nameplate_recorded",
+        "values": [
+          { "quantity": "power_mva", "value": 25, "unit": "MVA", "basisLabel": "normal", "coolingMode": "OA" }
+        ],
+        "effective": { "start": "2026-01-10" },
+        "evidenceRefs": [
+          { "evidenceId": "ev-nameplate-photo-starter-001", "purpose": "recorded_source" }
+        ],
+        "notes": "Minimal example showing recorded values linked to evidence. No rating determination performed."
+      }
+    ],
+
+    "facilities": [],
+    "elements": [],
+    "assumptionSets": [],
+    "studyReferences": [],
+    "deliverables": [],
+    "traceLinks": [],
+    "reviewEvents": [],
+    "changeEvents": []
+  }
+}

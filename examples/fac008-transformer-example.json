@@ -1,0 +1,160 @@
+{
+  "package": {
+    "packageId": "pkg-2026-01-11-fac008-xfmr-001",
+    "schemaVersion": "v0.1",
+    "generatedAt": "2026-01-11T03:15:00Z",
+
+    "assets": [
+      {
+        "assetId": "asset-xfmr-t1",
+        "assetClass": "transformer",
+        "manufacturer": "ExampleCo",
+        "model": "TX-500",
+        "serialNumber": "SN123456",
+        "locationHint": "Example Substation",
+        "evidenceRefs": [
+          { "evidenceId": "ev-nameplate-photo-0001", "purpose": "nameplate_photo" },
+          { "evidenceId": "ev-ocr-extract-0001", "purpose": "ocr_extract" }
+        ]
+      }
+    ],
+
+    "evidence": [
+      {
+        "evidenceId": "ev-nameplate-photo-0001",
+        "type": "image",
+        "capturedAt": "2026-01-10T20:14:22Z",
+        "source": { "system": "field_capture_app", "deviceId": "device-7f2a", "uploadedBy": "technician" },
+        "uri": "s3://example-bucket/tavri/evidence/ev-nameplate-photo-0001.jpg",
+        "hashAlg": "sha256",
+        "hash": "b8f2c7b62d0f4b7f0b0b8d6f87b5f0e2d2a1b1fbc5c0ab12e93d1b2a3c4d5e6f"
+      },
+      {
+        "evidenceId": "ev-ocr-extract-0001",
+        "type": "ocr_extract",
+        "capturedAt": "2026-01-10T20:16:10Z",
+        "source": { "system": "ocr_pipeline", "uploadedBy": "system" },
+        "uri": "s3://example-bucket/tavri/evidence/ev-ocr-extract-0001.json",
+        "hashAlg": "sha256",
+        "hash": "aa11bb22cc33dd44ee55ff6677889900aa11bb22cc33dd44ee55ff6677889900",
+        "notes": "OCR output captured as an artifact; represents extracted text only."
+      },
+      {
+        "evidenceId": "ev-rating-memo-pdf-0001",
+        "type": "pdf",
+        "capturedAt": "2026-01-10T22:30:00Z",
+        "source": { "system": "engineering_repository", "uploadedBy": "engineer" },
+        "uri": "s3://example-bucket/tavri/evidence/ev-rating-memo-pdf-0001.pdf",
+        "hashAlg": "sha256",
+        "hash": "0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff0"
+      }
+    ],
+
+    "facilities": [
+      { "facilityId": "fac-example-sub", "name": "Example Substation", "operator": "Example Utility" }
+    ],
+
+    "elements": [
+      {
+        "elementId": "elem-t1-bank",
+        "facilityId": "fac-example-sub",
+        "elementType": "transformer_bank",
+        "displayName": "Transformer Bank T1",
+        "assetRefs": ["asset-xfmr-t1"]
+      }
+    ],
+
+    "assumptionSets": [
+      {
+        "assumptionSetId": "asmp-summer-normal",
+        "labels": ["summer", "normal"],
+        "declaredAssumptions": [
+          { "key": "ambient_temperature", "value": 30, "unit": "C" }
+        ],
+        "evidenceRefs": [
+          { "evidenceId": "ev-rating-memo-pdf-0001", "purpose": "assumption_reference" }
+        ]
+      }
+    ],
+
+    "studyReferences": [
+      {
+        "studyRefId": "study-memo-0001",
+        "methodType": "engineering_memo",
+        "title": "T1 Recorded Rating Memo",
+        "version": "1.0",
+        "performedBy": "Example Utility Engineering",
+        "performedAt": "2026-01-10T22:00:00Z",
+        "assumptionSetIds": ["asmp-summer-normal"],
+        "deliverableIds": ["deliv-rating-memo-0001"],
+        "evidenceRefs": [
+          { "evidenceId": "ev-nameplate-photo-0001", "purpose": "input_nameplate" },
+          { "evidenceId": "ev-ocr-extract-0001", "purpose": "input_extraction_artifact" }
+        ]
+      }
+    ],
+
+    "deliverables": [
+      {
+        "deliverableId": "deliv-rating-memo-0001",
+        "type": "memo_pdf",
+        "title": "T1 Recorded Rating Memo (PDF)",
+        "evidenceRef": { "evidenceId": "ev-rating-memo-pdf-0001", "purpose": "deliverable_pdf" }
+      }
+    ],
+
+    "ratingRecords": [
+      {
+        "ratingRecordId": "rr-t1-2026-01-10",
+        "assetId": "asset-xfmr-t1",
+        "elementId": "elem-t1-bank",
+        "ratingType": "study_recorded",
+        "values": [
+          { "quantity": "power_mva", "value": 50, "unit": "MVA", "basisLabel": "normal", "coolingMode": "OA/FA" },
+          { "quantity": "power_mva", "value": 60, "unit": "MVA", "basisLabel": "emergency", "coolingMode": "OA/FA" }
+        ],
+        "effective": { "start": "2026-01-10" },
+        "studyRefIds": ["study-memo-0001"],
+        "deliverableIds": ["deliv-rating-memo-0001"],
+        "evidenceRefs": [
+          { "evidenceId": "ev-rating-memo-pdf-0001", "purpose": "recorded_output" }
+        ],
+        "notes": "Recorded outputs only; schema does not determine ratings."
+      }
+    ],
+
+    "traceLinks": [
+      {
+        "traceLinkId": "tl-asset-nameplate-0001",
+        "linkType": "asset_has_evidence",
+        "from": { "kind": "asset", "id": "asset-xfmr-t1" },
+        "to": { "kind": "evidence", "id": "ev-nameplate-photo-0001" }
+      },
+      {
+        "traceLinkId": "tl-rating-supported-0001",
+        "linkType": "record_supported_by_evidence",
+        "from": { "kind": "ratingRecord", "id": "rr-t1-2026-01-10" },
+        "to": { "kind": "evidence", "id": "ev-rating-memo-pdf-0001" }
+      }
+    ],
+
+    "reviewEvents": [
+      {
+        "reviewEventId": "rev-0002",
+        "performedBy": "Example Utility Engineer",
+        "performedAt": "2026-01-10T23:00:00Z",
+        "scope": [
+          { "kind": "ratingRecord", "id": "rr-t1-2026-01-10" },
+          { "kind": "deliverable", "id": "deliv-rating-memo-0001" }
+        ],
+        "outcome": "reviewed",
+        "evidenceRefs": [
+          { "evidenceId": "ev-rating-memo-pdf-0001", "purpose": "reviewed_deliverable" }
+        ],
+        "notes": "Human review event recorded."
+      }
+    ],
+
+    "changeEvents": []
+  }
+}

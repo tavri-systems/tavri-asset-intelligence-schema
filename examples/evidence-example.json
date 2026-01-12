@@ -1,0 +1,42 @@
+{
+  "package": {
+    "packageId": "pkg-2026-01-11-evidence-001",
+    "schemaVersion": "v0.1",
+    "generatedAt": "2026-01-11T03:10:00Z",
+    "assets": [],
+    "evidence": [
+      {
+        "evidenceId": "ev-nameplate-photo-0001",
+        "type": "image",
+        "capturedAt": "2026-01-10T20:14:22Z",
+        "source": {
+          "system": "field_capture_app",
+          "deviceId": "device-7f2a",
+          "uploadedBy": "technician"
+        },
+        "uri": "s3://example-bucket/tavri/evidence/ev-nameplate-photo-0001.jpg",
+        "hashAlg": "sha256",
+        "hash": "b8f2c7b62d0f4b7f0b0b8d6f87b5f0e2d2a1b1fbc5c0ab12e93d1b2a3c4d5e6f",
+        "notes": "Transformer nameplate photo captured at site."
+      }
+    ],
+    "traceLinks": [],
+    "reviewEvents": [
+      {
+        "reviewEventId": "rev-2026-01-11-0001",
+        "performedBy": "engineer.jwright",
+        "performedAt": "2026-01-11T03:12:00Z",
+        "locationHint": "Remote engineering review",
+        "scope": [
+          { "kind": "evidence", "id": "ev-nameplate-photo-0001" }
+        ],
+        "outcome": "reviewed",
+        "evidenceRefs": [
+          { "evidenceId": "ev-nameplate-photo-0001", "purpose": "review_target" }
+        ],
+        "notes": "Reviewed nameplate photo for clarity and legibility."
+      }
+    ],
+    "changeEvents": []
+  }
+}

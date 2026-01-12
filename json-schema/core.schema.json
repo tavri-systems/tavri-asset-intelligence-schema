@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tavri.com/schema/tais/core.schema.json",
+  "title": "TAIS Core Schema",
+  "$comment": "TAIS Core Schema v0.1. This schema provides reusable $defs for TAIS objects. It models recorded artifacts and traceability; it does not prescribe workflow authority, compliance determinations, or control logic.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "package": { "$ref": "#/$defs/Package" }
+  },
+  "required": ["package"],
+  "$defs": {
+    "Id": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 128,
+      "pattern": "^[a-zA-Z0-9._:-]+$"
+    },
+    "ISODateTime": { "type": "string", "format": "date-time" },
+    "ISODate": { "type": "string", "format": "date" },
+    "Uri": { "type": "string", "minLength": 1 },
+
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evidenceId": { "$ref": "#/$defs/Id" },
+        "purpose": { "type": "string", "minLength": 1, "maxLength": 64 }
+      },
+      "required": ["evidenceId"]
+    },
+
+    "Attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attestationId": { "$ref": "#/$defs/Id" },
+        "attestationType": {
+          "type": "string",
+          "enum": ["prepared_by", "reviewed_by", "approved_by", "issued_by", "other"]
+        },
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "role": { "type": "string", "maxLength": 128 },
+        "organization": { "type": "string", "maxLength": 128 },
+        "signedAt": { "$ref": "#/$defs/ISODateTime" },
+        "locationHint": { "type": "string", "maxLength": 128 },
+        "signatureEvidenceRef": { "$ref": "#/$defs/EvidenceRef" },
+        "notes": { "type": "string", "maxLength": 512 }
+      },
+      "required": ["attestationId", "attestationType", "name", "signedAt"]
+    },
+
+    "AssetGeo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+        "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+        "source": { "type": "string", "maxLength": 64 },
+        "accuracyMeters": { "type": "number", "minimum": 0 },
+        "capturedAt": { "$ref": "#/$defs/ISODateTime" }
+      },
+      "required": ["lat", "lon"]
+    },
+
+    "Asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assetId": { "$ref": "#/$defs/Id" },
+        "assetClass": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "manufacturer": { "type": "string", "maxLength": 128 },
+        "model": { "type": "string", "maxLength": 128 },
+        "serialNumber": { "type": "string", "maxLength": 128 },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 64 },
+          "maxItems": 50
+        },
+        "locationHint": { "type": "string", "maxLength": 256 },
+        "geo": { "$ref": "#/$defs/AssetGeo" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" },
+          "maxItems": 200
+        }
+      },
+      "required": ["assetId", "assetClass"]
+    },
+
+    "Evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evidenceId": { "$ref": "#/$defs/Id" },
+        "type": {
+          "type": "string",
+          "enum": ["image", "pdf", "ocr_extract", "drawing", "memo", "spreadsheet", "other"]
+        },
+        "capturedAt": { "$ref": "#/$defs/ISODateTime" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "system": { "type": "string", "maxLength": 128 },
+            "deviceId": { "type": "string", "maxLength": 128 },
+            "uploadedBy": { "type": "string", "maxLength": 128 }
+          }
+        },
+        "uri": { "$ref": "#/$defs/Uri" },
+        "hashAlg": { "type": "string", "enum": ["sha256", "sha512"] },
+        "hash": {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": "^[A-Fa-f0-9]+$"
+        },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["evidenceId", "type", "uri"]
+    },
+
+    "TraceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "traceLinkId": { "$ref": "#/$defs/Id" },
+        "linkType": {
+          "type": "string",
+          "enum": [
+            "asset_has_evidence",
+            "record_supported_by_evidence",
+            "record_superseded_by_record",
+            "review_applies_to_record",
+            "other"
+          ]
+        },
+        "from": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "type": "string", "maxLength": 64 },
+            "id": { "$ref": "#/$defs/Id" }
+          },
+          "required": ["kind", "id"]
+        },
+        "to": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "type": "string", "maxLength": 64 },
+            "id": { "$ref": "#/$defs/Id" }
+          },
+          "required": ["kind", "id"]
+        },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["traceLinkId", "linkType", "from", "to"]
+    },
+
+    "ReviewEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewEventId": { "$ref": "#/$defs/Id" },
+        "performedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "performedAt": { "$ref": "#/$defs/ISODateTime" },
+        "locationHint": { "type": "string", "maxLength": 128 },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "type": "string", "maxLength": 64 },
+              "id": { "$ref": "#/$defs/Id" }
+            },
+            "required": ["kind", "id"]
+          },
+          "maxItems": 200
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["reviewed", "needs_more_info", "noted", "other"]
+        },
+        "attestations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Attestation" },
+          "maxItems": 50
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" },
+          "maxItems": 200
+        },
+        "notes": { "type": "string", "maxLength": 2000 }
+      },
+      "required": ["reviewEventId", "performedBy", "performedAt", "outcome"]
+    },
+
+    "ChangeEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "changeEventId": { "$ref": "#/$defs/Id" },
+        "changedAt": { "$ref": "#/$defs/ISODateTime" },
+        "changedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "changeType": { "type": "string", "enum": ["created", "corrected", "superseded"] },
+        "supersedes": { "$ref": "#/$defs/Id" },
+        "reason": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["changeEventId", "changedAt", "changedBy", "changeType"]
+    },
+
+    "Package": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "packageId": { "$ref": "#/$defs/Id" },
+        "schemaVersion": { "type": "string", "pattern": "^v\\d+\\.\\d+(\\.\\d+)?$" },
+        "generatedAt": { "$ref": "#/$defs/ISODateTime" },
+
+        "assets": { "type": "array", "items": { "$ref": "#/$defs/Asset" } },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/Evidence" } },
+        "traceLinks": { "type": "array", "items": { "$ref": "#/$defs/TraceLink" } },
+        "reviewEvents": { "type": "array", "items": { "$ref": "#/$defs/ReviewEvent" } },
+        "changeEvents": { "type": "array", "items": { "$ref": "#/$defs/ChangeEvent" } }
+      },
+      "required": ["packageId", "schemaVersion", "generatedAt"]
+    }
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tavri.com/schema/tais/fac008.schema.json",
+  "title": "TAIS FAC-008 Extension Schema",
+  "$comment": "TAIS FAC-008 Extension v0.1. This schema models recorded rating outputs, provenance, attestations (including signature artifact references), and effective-date chains for FAC-008 workflows. It does not perform rating determination, compliance decisions, or control logic.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "package": { "$ref": "#/$defs/Fac008Package" }
+  },
+  "required": ["package"],
+  "$defs": {
+    "Id": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 128,
+      "pattern": "^[a-zA-Z0-9._:-]+$"
+    },
+    "ISODateTime": { "type": "string", "format": "date-time" },
+    "ISODate": { "type": "string", "format": "date" },
+
+    "EvidenceRef": { "$ref": "./core.schema.json#/$defs/EvidenceRef" },
+    "Asset": { "$ref": "./core.schema.json#/$defs/Asset" },
+    "Evidence": { "$ref": "./core.schema.json#/$defs/Evidence" },
+    "TraceLink": { "$ref": "./core.schema.json#/$defs/TraceLink" },
+    "ReviewEvent": { "$ref": "./core.schema.json#/$defs/ReviewEvent" },
+    "ChangeEvent": { "$ref": "./core.schema.json#/$defs/ChangeEvent" },
+
+    "Attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attestationId": { "$ref": "#/$defs/Id" },
+        "attestationType": {
+          "type": "string",
+          "enum": ["prepared_by", "reviewed_by", "approved_by", "issued_by", "other"]
+        },
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "role": { "type": "string", "maxLength": 128 },
+        "organization": { "type": "string", "maxLength": 128 },
+        "signedAt": { "$ref": "#/$defs/ISODateTime" },
+        "locationHint": { "type": "string", "maxLength": 128 },
+        "signatureEvidenceRef": { "$ref": "#/$defs/EvidenceRef" },
+        "notes": { "type": "string", "maxLength": 512 }
+      },
+      "required": ["attestationId", "attestationType", "name", "signedAt"]
+    },
+
+    "Facility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "facilityId": { "$ref": "#/$defs/Id" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "operator": { "type": "string", "maxLength": 128 },
+        "region": { "type": "string", "maxLength": 128 },
+        "responsibleEntity": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" },
+          "maxItems": 200
+        }
+      },
+      "required": ["facilityId", "name"]
+    },
+
+    "Element": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "elementId": { "$ref": "#/$defs/Id" },
+        "facilityId": { "$ref": "#/$defs/Id" },
+        "elementType": {
+          "type": "string",
+          "enum": ["transformer_bank", "line", "breaker", "bus", "relay_group", "other"]
+        },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "assetRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Id" },
+          "maxItems": 200
+        },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["elementId", "facilityId", "elementType", "displayName"]
+    },
+
+    "AssumptionSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assumptionSetId": { "$ref": "#/$defs/Id" },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 64 },
+          "maxItems": 20
+        },
+        "declaredAssumptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "key": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "type": ["number", "string"] },
+              "unit": { "type": "string", "maxLength": 32 },
+              "notes": { "type": "string", "maxLength": 256 }
+            },
+            "required": ["key", "value"]
+          },
+          "maxItems": 200
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" },
+          "maxItems": 200
+        }
+      },
+      "required": ["assumptionSetId"]
+    },
+
+    "Deliverable": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deliverableId": { "$ref": "#/$defs/Id" },
+        "type": {
+          "type": "string",
+          "enum": ["rating_table_pdf", "memo_pdf", "spreadsheet", "other"]
+        },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "evidenceRef": { "$ref": "#/$defs/EvidenceRef" }
+      },
+      "required": ["deliverableId", "type", "title", "evidenceRef"]
+    },
+
+    "StudyReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "studyRefId": { "$ref": "#/$defs/Id" },
+        "methodType": {
+          "type": "string",
+          "enum": ["nameplate", "manufacturer_curve", "thermal_model", "field_test", "engineering_memo", "other"]
+        },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "version": { "type": "string", "maxLength": 64 },
+        "performedBy": { "type": "string", "maxLength": 128 },
+        "performedAt": { "$ref": "#/$defs/ISODateTime" },
+        "assumptionSetIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Id" },
+          "maxItems": 50
+        },
+        "deliverableIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Id" },
+          "maxItems": 50
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" },
+          "maxItems": 200
+        }
+      },
+      "required": ["studyRefId", "methodType", "title"]
+    },
+
+    "RatingRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ratingRecordId": { "$ref": "#/$defs/Id" },
+        "assetId": { "$ref": "#/$defs/Id" },
+        "elementId": { "$ref": "#/$defs/Id" },
+        "ratingType": {
+          "type": "string",
+          "enum": ["nameplate_recorded", "study_recorded", "manufacturer_curve_recorded", "other_recorded"]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "quantity": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "type": ["number", "string"] },
+              "unit": { "type": "string", "maxLength": 32 },
+              "basisLabel": { "type": "string", "maxLength": 64 },
+              "coolingMode": { "type": "string", "maxLength": 64 },
+              "notes": { "type": "string", "maxLength": 256 }
+            },
+            "required": ["quantity", "value"]
+          },
+          "minItems": 1,
+          "maxItems": 200
+        },
+        "effective": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "start": { "$ref": "#/$defs/ISODate" },
+            "end": { "$ref": "#/$defs/ISODate" }
+          },
+          "required": ["start"]
+        },
+        "supersedes": { "$ref": "#/$defs/Id" },
+        "studyRefIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Id" },
+          "maxItems": 50
+        },
+        "deliverableIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Id" },
+          "maxItems": 50
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" },
+          "maxItems": 200
+        },
+        "attestations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Attestation" },
+          "maxItems": 50
+        },
+        "notes": { "type": "string", "maxLength": 2000 }
+      },
+      "required": ["ratingRecordId", "ratingType", "values", "effective"]
+    },
+
+    "SourceSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "maxLength": 128 },
+        "version": { "type": "string", "maxLength": 64 },
+        "exportedBy": { "type": "string", "maxLength": 128 }
+      }
+    },
+
+    "Fac008Package": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "packageId": { "$ref": "#/$defs/Id" },
+        "schemaVersion": { "type": "string", "pattern": "^v\\d+\\.\\d+(\\.\\d+)?$" },
+        "generatedAt": { "$ref": "#/$defs/ISODateTime" },
+
+        "sourceSystem": { "$ref": "#/$defs/SourceSystem" },
+
+        "assets": { "type": "array", "items": { "$ref": "#/$defs/Asset" } },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/Evidence" } },
+        "facilities": { "type": "array", "items": { "$ref": "#/$defs/Facility" } },
+        "elements": { "type": "array", "items": { "$ref": "#/$defs/Element" } },
+
+        "assumptionSets": { "type": "array", "items": { "$ref": "#/$defs/AssumptionSet" } },
+        "studyReferences": { "type": "array", "items": { "$ref": "#/$defs/StudyReference" } },
+        "deliverables": { "type": "array", "items": { "$ref": "#/$defs/Deliverable" } },
+        "ratingRecords": { "type": "array", "items": { "$ref": "#/$defs/RatingRecord" } },
+
+        "traceLinks": { "type": "array", "items": { "$ref": "#/$defs/TraceLink" } },
+        "reviewEvents": { "type": "array", "items": { "$ref": "#/$defs/ReviewEvent" } },
+        "changeEvents": { "type": "array", "items": { "$ref": "#/$defs/ChangeEvent" } }
+      },
+      "required": ["packageId", "schemaVersion", "generatedAt"]
+    }
+  }
+}
