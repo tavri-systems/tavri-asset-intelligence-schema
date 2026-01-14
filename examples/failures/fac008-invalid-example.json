@@ -1,0 +1,28 @@
+{
+  "$comment": "Intentionally invalid example used to verify schema enforcement",
+  "package": {
+    "packageId": "short", 
+    "schemaVersion": "0.1.1", 
+    "generatedAt": "2026-01-11", 
+
+    "facilities": [
+      {
+        "facilityId": "fac-sub-001",
+        "name": "Example Substation",
+        "unknown_field": "error_trigger"
+      }
+    ],
+
+    "ratingRecords": [
+      {
+        "ratingRecordId": "rr-fail-001",
+        "assetId": "asset-123",
+        "ratingType": "nameplate_recorded",
+        "values": [
+          { "quantity": "power", "value": "fifty" }
+        ],
+        "effective": { "start": "2026-01-11" }
+      }
+    ]
+  }
+}

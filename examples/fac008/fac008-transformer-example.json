@@ -1,7 +1,7 @@
 {
   "package": {
     "packageId": "pkg-2026-01-11-fac008-xfmr-001",
-    "schemaVersion": "v0.1",
+    "schemaVersion": "v0.1.1",
     "generatedAt": "2026-01-11T03:15:00Z",
 
     "assets": [

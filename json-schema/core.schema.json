@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "TAIS Core v0.1.1 — Open schema for evidence-linked asset intelligence in regulated environments. Models recorded artifacts and traceability only; does not prescribe workflow authority, compliance determinations, or control logic. See https://tavri.com for context.",
   "$id": "https://tavri.com/schema/tais/core.schema.json",
   "title": "TAIS Core Schema",
-  "$comment": "TAIS Core Schema v0.1. This schema provides reusable $defs for TAIS objects. It models recorded artifacts and traceability; it does not prescribe workflow authority, compliance determinations, or control logic.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -14,7 +14,8 @@
       "type": "string",
       "minLength": 6,
       "maxLength": 128,
-      "pattern": "^[a-zA-Z0-9._:-]+$"
+      "pattern": "^[a-zA-Z0-9._:-]+$",
+      "$comment": "Identifier supports URN-style namespaces (e.g., urn:tavri:asset:12345)."
     },
     "ISODateTime": { "type": "string", "format": "date-time" },
     "ISODate": { "type": "string", "format": "date" },
@@ -44,7 +45,18 @@
         "organization": { "type": "string", "maxLength": 128 },
         "signedAt": { "$ref": "#/$defs/ISODateTime" },
         "locationHint": { "type": "string", "maxLength": 128 },
+
         "signatureEvidenceRef": { "$ref": "#/$defs/EvidenceRef" },
+        "signatureValue": {
+          "type": "string",
+          "maxLength": 8192,
+          "$comment": "Optional embedded signature material (e.g., base64 JWS/CMS). Informational only; verification is out of scope."
+        },
+        "publicKeyId": {
+          "$ref": "#/$defs/Id",
+          "$comment": "Optional identifier for a public key or certificate used to produce the signature."
+        },
+
         "notes": { "type": "string", "maxLength": 512 }
       },
       "required": ["attestationId", "attestationType", "name", "signedAt"]
@@ -95,7 +107,18 @@
         "evidenceId": { "$ref": "#/$defs/Id" },
         "type": {
           "type": "string",
-          "enum": ["image", "pdf", "ocr_extract", "drawing", "memo", "spreadsheet", "other"]
+          "enum": [
+            "image",
+            "pdf",
+            "ocr_extract",
+            "drawing",
+            "memo",
+            "spreadsheet",
+            "telemetry",
+            "data_capture",
+            "json",
+            "other"
+          ]
         },
         "capturedAt": { "$ref": "#/$defs/ISODateTime" },
         "source": {

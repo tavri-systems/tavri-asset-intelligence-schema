@@ -1,0 +1,46 @@
+{
+  "$comment": "Intentionally invalid example used to verify schema enforcement",
+  "package": {
+    "packageId": "pkg-001",
+    "schemaVersion": "v0.1.1",
+    "generatedAt": "2026-01-13T22:00:00Z",
+
+    "assets": [
+      {
+        "assetId": "asset-valid-id",
+        "assetClass": "transformer",
+        "geo": {
+          "lat": 95.0,
+          "lon": -100.0
+        }
+      }
+    ],
+
+    "evidence": [
+      {
+        "evidenceId": "ev-photo-01",
+        "type": "photograph",
+        "uri": "https://tavri.com/storage/1.jpg",
+        "hashAlg": "md5",
+        "hash": "Z3VpbHR5"
+      }
+    ],
+
+    "reviewEvents": [
+      {
+        "reviewEventId": "rev-999",
+        "performedBy": "Engineer A",
+        "performedAt": "2026-01-13T22:05:00Z",
+        "outcome": "approved",
+        "attestations": [
+          {
+            "attestationId": "att-01",
+            "attestationType": "witnessed_by",
+            "name": "Witness Name",
+            "signedAt": "not-a-date"
+          }
+        ]
+      }
+    ]
+  }
+}

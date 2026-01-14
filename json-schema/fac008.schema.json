@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://tavri.com/schema/tais/fac008.schema.json",
   "title": "TAIS FAC-008 Extension Schema",
-  "$comment": "TAIS FAC-008 Extension v0.1. This schema models recorded rating outputs, provenance, attestations (including signature artifact references), and effective-date chains for FAC-008 workflows. It does not perform rating determination, compliance decisions, or control logic.",
+  "$comment": "TAIS FAC-008 Extension v0.1.1. Synchronized with TAIS Core v0.1.1. This schema models recorded rating outputs, provenance, and effective-date chains for FAC-008 workflows. See https://tavri.com for context.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -25,26 +25,7 @@
     "TraceLink": { "$ref": "./core.schema.json#/$defs/TraceLink" },
     "ReviewEvent": { "$ref": "./core.schema.json#/$defs/ReviewEvent" },
     "ChangeEvent": { "$ref": "./core.schema.json#/$defs/ChangeEvent" },
-
-    "Attestation": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "attestationId": { "$ref": "#/$defs/Id" },
-        "attestationType": {
-          "type": "string",
-          "enum": ["prepared_by", "reviewed_by", "approved_by", "issued_by", "other"]
-        },
-        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
-        "role": { "type": "string", "maxLength": 128 },
-        "organization": { "type": "string", "maxLength": 128 },
-        "signedAt": { "$ref": "#/$defs/ISODateTime" },
-        "locationHint": { "type": "string", "maxLength": 128 },
-        "signatureEvidenceRef": { "$ref": "#/$defs/EvidenceRef" },
-        "notes": { "type": "string", "maxLength": 512 }
-      },
-      "required": ["attestationId", "attestationType", "name", "signedAt"]
-    },
+    "Attestation": { "$ref": "./core.schema.json#/$defs/Attestation" },
 
     "Facility": {
       "type": "object",
@@ -166,10 +147,11 @@
       "required": ["studyRefId", "methodType", "title"]
     },
 
-    "RatingRecord": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
+      "RatingRecord": {
+        "$comment": "Represents recorded rating outputs and their provenance. This object captures results for traceability and audit purposes only; it does not prescribe calculation methods, decision logic, or compliance determinations.",
+         "type": "object",
+         "additionalProperties": false,
+         "properties": {
         "ratingRecordId": { "$ref": "#/$defs/Id" },
         "assetId": { "$ref": "#/$defs/Id" },
         "elementId": { "$ref": "#/$defs/Id" },
@@ -227,7 +209,7 @@
         },
         "notes": { "type": "string", "maxLength": 2000 }
       },
-      "required": ["ratingRecordId", "ratingType", "values", "effective"]
+      "required": ["ratingRecordId", "assetId", "elementId", "ratingType", "values", "effective"]
     },
 
     "SourceSystem": {

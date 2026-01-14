@@ -1,5 +1,5 @@
 # TAIS — FAC-008 Extension (Evidence & Rating Records)
-**Version:** v0.1 (Draft)  
+**Version:** v0.1.1 
 **Scope:** Represent FAC-008-relevant context, recorded rating outputs, provenance, and effective-date chains.
 
 ## 1. Purpose
